@@ -7,20 +7,20 @@ import 'package:todos/repositories/todos_repository.dart';
 // ESTATS:
 //  - LoadInProgress()
 //  - Loaded(todos)
-//  - LoadFailure()
+//  - LoadError()
 //==============================================================
-abstract class TodosState {
-  TodosState();
+abstract class State {
+  State();
 }
 
-class LoadInProgress extends TodosState {}
+class LoadInProgress extends State {}
 
-class Loaded extends TodosState {
+class Loaded extends State {
   final List<Todo> todos;
   Loaded(this.todos);
 }
 
-class LoadFailure extends TodosState {}
+class LoadError extends State {}
 
 //==============================================================
 // ESDEVENIMENTS:
@@ -31,44 +31,44 @@ class LoadFailure extends TodosState {}
 //  - DeleteCompleted()
 //  - ToggleAll
 //==============================================================
-abstract class TodosEvent {
-  TodosEvent();
+abstract class Event {
+  Event();
 }
 
-class Load extends TodosEvent {}
+class Load extends Event {}
 
-class Add extends TodosEvent {
+class Add extends Event {
   final Todo todo;
   Add(this.todo);
 }
 
-class Update extends TodosEvent {
+class Update extends Event {
   final Todo todo;
   Update(this.todo);
 }
 
-class Delete extends TodosEvent {
+class Delete extends Event {
   final Todo todo;
   Delete(this.todo);
 }
 
-class DeleteCompleted extends TodosEvent {}
+class DeleteCompleted extends Event {}
 
-class ToggeAll extends TodosEvent {}
+class ToggeAll extends Event {}
 
 //==============================================================
 // MAP
 //==============================================================
 
-class TodosBloc extends Bloc<TodosEvent, TodosState> {
+class Map extends Bloc<Event, State> {
   final TodosRepository todosRepository;
 
-  TodosBloc({
+  Map({
     @required this.todosRepository,
   }) : super(LoadInProgress());
 
   @override
-  Stream<TodosState> mapEventToState(TodosEvent event) async* {
+  Stream<State> mapEventToState(Event event) async* {
     if (event is Load)
       yield* _mapLoad();
     else if (event is Add)
@@ -84,16 +84,16 @@ class TodosBloc extends Bloc<TodosEvent, TodosState> {
     }
   }
 
-  Stream<TodosState> _mapLoad() async* {
+  Stream<State> _mapLoad() async* {
     try {
       List<Todo> todos = todosRepository.loadTodos();
       yield Loaded(todos);
     } catch (_) {
-      yield LoadFailure();
+      yield LoadError();
     }
   }
 
-  Stream<TodosState> _mapAdd(Todo todoAdded) async* {
+  Stream<State> _mapAdd(Todo todoAdded) async* {
     if (state is Loaded) {
       final initialList = (state as Loaded).todos;
       final newList = List.from(initialList)..add(todoAdded);
@@ -102,7 +102,7 @@ class TodosBloc extends Bloc<TodosEvent, TodosState> {
     }
   }
 
-  Stream<TodosState> _mapUpdate(Todo todoUpdated) async* {
+  Stream<State> _mapUpdate(Todo todoUpdated) async* {
     if (state is Loaded) {
       final initialList = (state as Loaded).todos;
       final newList = initialList.map((todo) => (todo.id == todoUpdated.id) ? todoUpdated : todo).toList();
@@ -111,7 +111,7 @@ class TodosBloc extends Bloc<TodosEvent, TodosState> {
     }
   }
 
-  Stream<TodosState> _mapDelete(Todo todoDeleted) async* {
+  Stream<State> _mapDelete(Todo todoDeleted) async* {
     if (state is Loaded) {
       final initialList = (state as Loaded).todos;
       final newList = initialList.where((todo) => (todo.id != todoDeleted.id)).toList();
@@ -121,7 +121,7 @@ class TodosBloc extends Bloc<TodosEvent, TodosState> {
   }
 
   // Nota every checks whether every element of this iterable satisfies test.
-  Stream<TodosState> _mapToggleAll() async* {
+  Stream<State> _mapToggleAll() async* {
     if (state is Loaded) {
       final initialList = (state as Loaded).todos;
       final bool allComplete = initialList.every((todo) => todo.complete);
@@ -131,7 +131,7 @@ class TodosBloc extends Bloc<TodosEvent, TodosState> {
     }
   }
 
-  Stream<TodosState> _mapDeleteCompleted() async* {
+  Stream<State> _mapDeleteCompleted() async* {
     if (state is Loaded) {
       final initialList = (state as Loaded).todos;
       final newList = initialList.where((todo) => !todo.complete).toList();
