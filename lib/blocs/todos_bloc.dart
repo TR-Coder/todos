@@ -5,7 +5,7 @@ import 'package:todos/repositories/todos_repository.dart';
 
 //==============================================================
 // ESTATS:
-//  - LoadInProgress()
+//  - Loading()
 //  - Loaded(todos)
 //  - LoadError()
 //==============================================================
@@ -13,7 +13,7 @@ abstract class State {
   State();
 }
 
-class LoadInProgress extends State {}
+class Loading extends State {}
 
 class Loaded extends State {
   final List<Todo> todos;
@@ -60,12 +60,12 @@ class ToggeAll extends Event {}
 // MAP
 //==============================================================
 
-class Map extends Bloc<Event, State> {
+class TodosBloc extends Bloc<Event, State> {
   final TodosRepository todosRepository;
 
-  Map({
+  TodosBloc({
     @required this.todosRepository,
-  }) : super(LoadInProgress());
+  }) : super(Loading());
 
   @override
   Stream<State> mapEventToState(Event event) async* {

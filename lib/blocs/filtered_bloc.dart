@@ -8,14 +8,14 @@ import 'package:todos/models/visivility_filter.dart';
 
 //==============================================================
 // ESTATS:
-//  - FilterInProgress()
-//  - FilterLoaded(filteredTodos, activeFilter)
+//  - Loading()
+//  - Loaded(filteredTodos, activeFilter)
 //==============================================================
 abstract class State {
   const State();
 }
 
-class LoadInProgress extends State {}
+class Loading extends State {}
 
 class Loaded extends State {
   final List<Todo> filteredTodos;
@@ -25,8 +25,8 @@ class Loaded extends State {
 
 //==============================================================
 // ESDEVENIMENTS:
-//  - FilterUpdated(visibilityFilter)
-//  - TodosUpdated(todos) --> Listening TodosBloc
+//  - Updated(visibilityFilter)
+//  - TodosChanged(todos) --> Listening TodosBloc
 //==============================================================
 abstract class Event {
   const Event();
@@ -37,37 +37,36 @@ class Updated extends Event {
   const Updated(this.visibilityFilter);
 }
 
-class TodosUpdated extends Event {
+class TodosChanged extends Event {
   final List<Todo> todos;
-  const TodosUpdated(this.todos);
+  const TodosChanged(this.todos);
 }
 
 //==============================================================
 // MAP
 //==============================================================
-class Map extends Bloc<Event, State> {
-  final TODOSBLOC.Map todosBloc;
+class FilteredBloc extends Bloc<Event, State> {
+  final TODOSBLOC.TodosBloc todosBloc;
   StreamSubscription<TODOSBLOC.State> todosBlocSubscription;
 
-  Map({
+  FilteredBloc({
     @required this.todosBloc,
   }) : super(initialFilterState(todosBloc)) {
     todosBlocSubscription = createTodosBlocSubscription();
   }
 
-  static State initialFilterState(TODOSBLOC.Map todosBloc) {
+  static State initialFilterState(TODOSBLOC.TodosBloc todosBloc) {
     if (todosBloc.state is TODOSBLOC.Loaded) {
       var todos = (todosBloc.state as TODOSBLOC.Loaded).todos;
       return Loaded(todos, VisibilityFilter.all);
     }
-    return LoadInProgress();
+    return Loading();
   }
 
   StreamSubscription<TODOSBLOC.State> createTodosBlocSubscription() {
     return todosBloc.stream.listen((state) {
       if (state is TODOSBLOC.Loaded) {
-        final todos = state.todos;
-        add(TodosUpdated(todos));
+        add(TodosChanged(state.todos));
       }
     });
   }
@@ -79,8 +78,33 @@ class Map extends Bloc<Event, State> {
   }
 
   @override
-  Stream<FilterState> mapEventToState(FilterEvent event) {
-    // TODO: implement mapEventToState
-    throw UnimplementedError();
+  Stream<State> mapEventToState(Event event) async* {
+    if (event is Updated)
+      yield* _mapUpdated(event.visibilityFilter);
+    else if (event is TodosChanged) {
+      yield* _mapTodosChanged(event.todos);
+    }
+  }
+
+  Stream<State> _mapUpdated(VisibilityFilter visibilityFilter) async* {
+    if (todosBloc.state is TODOSBLOC.Loaded) {
+      final completeList = (state as TODOSBLOC.Loaded).todos;
+      List<Todo> filteredTodos = filterTodos(completeList, visibilityFilter);
+      yield Loaded(filteredTodos, visibilityFilter);
+    }
+  }
+
+  Stream<State> _mapTodosChanged(List<Todo> todos) async* {
+    final VisibilityFilter visibilityFilter = (state is Loaded) ? (state as Loaded).activeFilter : VisibilityFilter.all;
+    List<Todo> filteredTodos = filterTodos(todos, visibilityFilter);
+    yield Loaded(filteredTodos, visibilityFilter);
+  }
+
+  List<Todo> filterTodos(List<Todo> todos, VisibilityFilter filter) {
+    return todos.where((todo) {
+      if (filter == VisibilityFilter.all) return true;
+      if (filter == VisibilityFilter.active) return !todo.complete;
+      return todo.complete;
+    }).toList();
   }
 }

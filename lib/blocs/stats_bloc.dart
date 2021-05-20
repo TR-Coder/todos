@@ -1,8 +1,3 @@
-//==============================================================
-// ESTATS:
-//  - LoadInProgress()
-//  - Loaded(todos)
-//==============================================================
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -10,11 +5,17 @@ import 'package:meta/meta.dart';
 import 'package:todos/blocs/todos_bloc.dart' as TODOSBLOC;
 import 'package:todos/models/todo.dart';
 
+//==============================================================
+// ESTATS:
+//  - Loading()
+//  - Loaded(todos)
+//==============================================================
+
 abstract class State {
   const State();
 }
 
-class LoadInProgress extends State {}
+class Loading extends State {}
 
 class Loaded extends State {
   final int numActive;
@@ -30,20 +31,20 @@ abstract class Event {
   const Event();
 }
 
-class StatsChanged extends Event {
+class Load extends Event {
   final List<Todo> todos;
-  const StatsChanged(this.todos);
+  const Load(this.todos);
 }
 
 //==============================================================
 // MAP
-//==============================================================xs
+//==============================================================
 class Map extends Bloc<Event, State> {
-  final TODOSBLOC.Map todosBloc;
+  final TODOSBLOC.TodosBloc todosBloc;
   StreamSubscription<TODOSBLOC.State> todosBlocSubscription;
   Map({
     @required this.todosBloc,
-  }) : super(LoadInProgress()) {
+  }) : super(Loading()) {
     todosBlocSubscription = createTodosBlocSubscription();
   }
 
@@ -51,14 +52,23 @@ class Map extends Bloc<Event, State> {
     return todosBloc.stream.listen((state) {
       if (state is TODOSBLOC.Loaded) {
         final todos = (todosBloc.state as TODOSBLOC.Loaded).todos;
-        add(StatsChanged(todos));
+        add(Load(todos));
       }
     });
   }
 
   @override
-  Stream<State> mapEventToState(Event event) {
-    // TODO: implement mapEventToState
-    throw UnimplementedError();
+  Future<void> close() {
+    todosBlocSubscription.cancel();
+    return super.close();
+  }
+
+  @override
+  Stream<State> mapEventToState(Event event) async* {
+    if (event is Load) {
+      int numActive = event.todos.where((todo) => !todo.complete).toList().length;
+      int numCompleted = event.todos.where((todo) => todo.complete).toList().length;
+      yield Loaded(numActive, numCompleted);
+    }
   }
 }
