@@ -45,17 +45,17 @@ class TodosChanged extends Event {
 //==============================================================
 // MAP
 //==============================================================
-class FilteredBloc extends Bloc<Event, State> {
-  final TODOSBLOC.TodosBloc todosBloc;
+class Init extends Bloc<Event, State> {
+  final TODOSBLOC.Init todosBloc;
   StreamSubscription<TODOSBLOC.State> todosBlocSubscription;
 
-  FilteredBloc({
+  Init({
     @required this.todosBloc,
   }) : super(initialFilterState(todosBloc)) {
     todosBlocSubscription = createTodosBlocSubscription();
   }
 
-  static State initialFilterState(TODOSBLOC.TodosBloc todosBloc) {
+  static State initialFilterState(TODOSBLOC.Init todosBloc) {
     if (todosBloc.state is TODOSBLOC.Loaded) {
       var todos = (todosBloc.state as TODOSBLOC.Loaded).todos;
       return Loaded(todos, VisibilityFilter.all);
