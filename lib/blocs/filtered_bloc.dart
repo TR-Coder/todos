@@ -45,11 +45,11 @@ class TodosChanged extends Event {
 //==============================================================
 // MAP
 //==============================================================
-class Init extends Bloc<Event, State> {
+class Def extends Bloc<Event, State> {
   final TODOSBLOC.Init todosBloc;
   StreamSubscription<TODOSBLOC.State> todosBlocSubscription;
 
-  Init({
+  Def({
     @required this.todosBloc,
   }) : super(initialFilterState(todosBloc)) {
     todosBlocSubscription = createTodosBlocSubscription();

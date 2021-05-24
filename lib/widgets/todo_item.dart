@@ -10,7 +10,7 @@ class TodoItem extends StatelessWidget {
   static final keyTodoItemCheckbox = (String id) => Key('TodoItem__${id}__Checkbox');
   static final keyTodoItemTask = (String id) => Key('TodoItem__${id}__Task');
   static final keyTodoItemNote = (String id) => Key('TodoItem__${id}__Note');
-  static final keyTodoItem = (String id) => Key('TodoItem__${id}');
+  static final keyTodoItem = (String id) => Key('TodoItem__$id');
 
   TodoItem({
     @required this.onDismissed,

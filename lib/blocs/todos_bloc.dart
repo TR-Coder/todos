@@ -96,7 +96,7 @@ class Init extends Bloc<Event, State> {
   Stream<State> _mapAdd(Todo todoAdded) async* {
     if (state is Loaded) {
       final initialList = (state as Loaded).todos;
-      final newList = List.from(initialList)..add(todoAdded);
+      final List<Todo> newList = List.from(initialList)..add(todoAdded);
       yield Loaded(newList);
       _saveToRepository(newList);
     }

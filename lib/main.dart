@@ -23,8 +23,8 @@ void main() {
           BlocProvider<TABBLOC.Init>(
             create: (context) => TABBLOC.Init(),
           ),
-          BlocProvider<FILTEREDBLOC.Init>(
-            create: (context) => FILTEREDBLOC.Init(
+          BlocProvider<FILTEREDBLOC.Def>(
+            create: (context) => FILTEREDBLOC.Def(
               todosBloc: context.read<TODOSBLOC.Init>(),
             ),
           ),
