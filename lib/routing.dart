@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:todos/screens/detail_screen.dart';
 import 'package:todos/screens/home_screen.dart';
 
 class Routing {
@@ -13,6 +14,11 @@ class Routing {
       case HomeScreen.nom:
         return MaterialPageRoute(
           builder: (_) => HomeScreen(),
+        );
+      case DetailScreen.nom:
+        final String id = settings.arguments;
+        return MaterialPageRoute(
+          builder: (_) => DetailScreen(id: id),
         );
       // case PantallaMantenimentTasca.nom:
       //   final Tasca tasca = settings.arguments;

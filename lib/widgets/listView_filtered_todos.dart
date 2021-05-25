@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todos/models/todo.dart';
+import 'package:todos/screens/detail_screen.dart';
 import 'package:todos/widgets/delete_todo_snackBar.dart';
 import 'package:todos/widgets/loading_indicator.dart';
 import 'package:todos/widgets/todo_item.dart';
@@ -26,7 +27,19 @@ class ListViewFilteredTodos extends StatelessWidget {
               return TodoItem(
                 todo: todo,
                 onDismissed: (direction) => onDismissedItem(context, direction, todo),
-                onTap: null,
+                onTap: () async {
+                  final Todo removeTodo = await Navigator.pushNamed(context, DetailScreen.nom, arguments: todo.id);
+                  if (removeTodo != null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      DeleteTodoSnackBar(
+                        todo: todo,
+                        onUndo: () => context.read<TODOSBLOC.Init>().add(
+                              TODOSBLOC.Add(todo),
+                            ),
+                      ),
+                    );
+                  }
+                },
                 onCheckboxChanged: (_) {
                   final todosBloc = context.read<TODOSBLOC.Init>();
                   todosBloc.add(
