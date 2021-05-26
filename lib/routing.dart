@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:todos/screens/add_edit_screen.dart';
 import 'package:todos/screens/detail_screen.dart';
 import 'package:todos/screens/home_screen.dart';
 
@@ -20,6 +21,7 @@ class Routing {
         return MaterialPageRoute(
           builder: (_) => DetailScreen(id: id),
         );
+      case AddEditScreen.nom:
       // case PantallaMantenimentTasca.nom:
       //   final Tasca tasca = settings.arguments;
       //   return MaterialPageRoute<Tasca>(
@@ -27,7 +29,11 @@ class Routing {
       //   );
       //   break;
       default:
-        return null;
+        return MaterialPageRoute(
+          builder: (_) => Scaffold(
+            body: Center(child: Text('No route defined for ${settings.name}')),
+          ),
+        );
     }
   }
 }

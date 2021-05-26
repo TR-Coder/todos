@@ -13,24 +13,24 @@ void main() {
   Bloc.observer = SimpleBlocObserver();
   runApp(
     BlocProvider(
-      create: (_) => TODOSBLOC.Init(
+      create: (_) => TODOSBLOC.Def(
         todosRepository: TodosRepository(),
       )..add(
           TODOSBLOC.Load(), // CARREGA INICIAL DADES
         ),
       child: MultiBlocProvider(
         providers: [
-          BlocProvider<TABBLOC.Init>(
-            create: (context) => TABBLOC.Init(),
+          BlocProvider<TABBLOC.Def>(
+            create: (context) => TABBLOC.Def(),
           ),
           BlocProvider<FILTEREDBLOC.Def>(
             create: (context) => FILTEREDBLOC.Def(
-              todosBloc: context.read<TODOSBLOC.Init>(),
+              todosBloc: context.read<TODOSBLOC.Def>(),
             ),
           ),
-          BlocProvider<STATSBLOC.Init>(
-            create: (context) => STATSBLOC.Init(
-              todosBloc: context.read<TODOSBLOC.Init>(),
+          BlocProvider<STATSBLOC.Def>(
+            create: (context) => STATSBLOC.Def(
+              todosBloc: context.read<TODOSBLOC.Def>(),
             ),
           ),
         ],

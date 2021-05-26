@@ -21,8 +21,8 @@ class TabChanged extends Event {
 //==============================================================
 // MAP
 //==============================================================
-class Init extends Bloc<Event, AppTab> {
-  Init() : super(AppTab.todos);
+class Def extends Bloc<Event, AppTab> {
+  Def() : super(AppTab.todos);
 
   @override
   Stream<AppTab> mapEventToState(Event event) async* {

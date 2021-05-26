@@ -11,6 +11,7 @@ dependencies:
   flutter_bloc:
   meta:
   uuid:
+  scrollable_positioned_list: ^0.1.10
 
 dev_dependencies:
   flutter_test:

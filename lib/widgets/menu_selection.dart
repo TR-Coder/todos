@@ -26,10 +26,10 @@ class MenuSelection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<TODOSBLOC.Init, TODOSBLOC.State>(
+    return BlocBuilder<TODOSBLOC.Def, TODOSBLOC.State>(
       builder: (context, state) {
         if (state is TODOSBLOC.Loaded) {
-          final bloc = context.read<TODOSBLOC.Init>();
+          final bloc = context.read<TODOSBLOC.Def>();
           final blocState = (bloc.state as TODOSBLOC.Loaded);
           final allComplete = blocState.todos.every((todo) => todo.complete);
           return PopupMenuButton<ExtraAction>(

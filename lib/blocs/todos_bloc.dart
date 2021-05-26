@@ -60,10 +60,10 @@ class ToggeAll extends Event {}
 // MAP
 //==============================================================
 
-class Init extends Bloc<Event, State> {
+class Def extends Bloc<Event, State> {
   final TodosRepository todosRepository;
 
-  Init({
+  Def({
     @required this.todosRepository,
   }) : super(Loading());
 

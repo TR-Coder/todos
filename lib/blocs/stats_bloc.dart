@@ -39,10 +39,10 @@ class Load extends Event {
 //==============================================================
 // MAP
 //==============================================================
-class Init extends Bloc<Event, State> {
-  final TODOSBLOC.Init todosBloc;
+class Def extends Bloc<Event, State> {
+  final TODOSBLOC.Def todosBloc;
   StreamSubscription<TODOSBLOC.State> todosBlocSubscription;
-  Init({
+  Def({
     @required this.todosBloc,
   }) : super(Loading()) {
     todosBlocSubscription = createTodosBlocSubscription();

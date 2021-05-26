@@ -46,7 +46,7 @@ class TodosChanged extends Event {
 // MAP
 //==============================================================
 class Def extends Bloc<Event, State> {
-  final TODOSBLOC.Init todosBloc;
+  final TODOSBLOC.Def todosBloc;
   StreamSubscription<TODOSBLOC.State> todosBlocSubscription;
 
   Def({
@@ -55,7 +55,7 @@ class Def extends Bloc<Event, State> {
     todosBlocSubscription = createTodosBlocSubscription();
   }
 
-  static State initialFilterState(TODOSBLOC.Init todosBloc) {
+  static State initialFilterState(TODOSBLOC.Def todosBloc) {
     if (todosBloc.state is TODOSBLOC.Loaded) {
       var todos = (todosBloc.state as TODOSBLOC.Loaded).todos;
       return Loaded(todos, VisibilityFilter.all);
