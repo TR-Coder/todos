@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todos/blocs/todos_bloc.dart' as TODOSBLOC;
+import 'package:todos/models/todo.dart';
 import 'package:todos/screens/add_edit_screen.dart';
 
 class DetailScreen extends StatelessWidget {
@@ -74,14 +75,23 @@ class DetailScreen extends StatelessWidget {
                 ),
           floatingActionButton: FloatingActionButton(
             child: Icon(Icons.edit),
-            onPressed: (todo == null) ? null : callEditScreen(context),
+            onPressed: () => showEditScreen(context, todo),
           ),
         );
       },
     );
   }
 
-  void callEditScreen(BuildContext context) {
-    Navigator.of(context).pushNamed(AddEditScreen.nom);
+  void showEditScreen(BuildContext context, Todo todo) async {
+    if (todo == null) return;
+    final result = await Navigator.of(context).pushNamed(AddEditScreen.nom, arguments: {
+      'isEditing': true,
+      'todo': todo,
+    }) as Map;
+
+    final bloc = context.read<TODOSBLOC.Def>();
+    bloc.add(
+      TODOSBLOC.Update(todo.copyWith(task: result['task'], note: result['note'])),
+    );
   }
 }

@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:todos/models/todo.dart';
 
-typedef OnSaveCallback = Function(String task, String note);
+//typedef OnSaveCallback = Function(String task, String note);
 
 class AddEditScreen extends StatefulWidget {
   static const nom = '/AddEditScreen';
 
   final bool isEditing;
-  final OnSaveCallback onSave;
   final Todo todo;
 
   AddEditScreen({
-    @required this.onSave,
     @required this.isEditing,
     this.todo,
   });
@@ -49,8 +47,10 @@ class AddEditScreenState extends State<AddEditScreen> {
         onPressed: () {
           if (_formKey.currentState.validate()) {
             _formKey.currentState.save();
-            widget.onSave(_task, _note);
-            Navigator.pop(context);
+            Navigator.of(context).pop({
+              'task': _task,
+              'note': _note,
+            });
           }
         },
       ),
@@ -71,7 +71,7 @@ class AddEditScreenState extends State<AddEditScreen> {
   TextFormField _noteField(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     return TextFormField(
-      initialValue: isEditing ? widget.todo.task : '',
+      initialValue: isEditing ? widget.todo.note : '',
       maxLines: 10,
       style: textTheme.subtitle1,
       onSaved: (value) => _note = value,

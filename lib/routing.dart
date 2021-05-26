@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:todos/models/todo.dart';
 import 'package:todos/screens/add_edit_screen.dart';
 import 'package:todos/screens/detail_screen.dart';
 import 'package:todos/screens/home_screen.dart';
@@ -22,12 +23,15 @@ class Routing {
           builder: (_) => DetailScreen(id: id),
         );
       case AddEditScreen.nom:
-      // case PantallaMantenimentTasca.nom:
-      //   final Tasca tasca = settings.arguments;
-      //   return MaterialPageRoute<Tasca>(
-      //     builder: (context) => PantallaMantenimentTasca(tasca),
-      //   );
-      //   break;
+        final Map<String, dynamic> args = settings.arguments;
+        final bool isEditing = args['isEditing'] as bool;
+        final Todo todo = args['todo'] as Todo;
+        return MaterialPageRoute(
+          builder: (context) => AddEditScreen(
+            isEditing: isEditing,
+            todo: todo,
+          ),
+        );
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(
