@@ -8,6 +8,7 @@ import 'package:todos/widgets/menu_selection.dart';
 import 'package:todos/widgets/show_stats.dart';
 import 'package:todos/blocs/tab_bloc.dart' as TABBLOC;
 import 'package:todos/blocs/todos_bloc.dart' as TODOSBLOC;
+import 'package:todos/widgets/tab_selector.dart';
 
 class HomeScreen extends StatelessWidget {
   static const nom = '/HomeScreen';
@@ -29,6 +30,13 @@ class HomeScreen extends StatelessWidget {
           floatingActionButton: FloatingActionButton(
             child: Icon(Icons.add),
             onPressed: () => showEditScreen(context),
+          ),
+          bottomNavigationBar: TabSelector(
+            activeTab: activeTab,
+            tabSelectedFuncion: (tab) {
+              final bloc = context.read<TABBLOC.Def>();
+              bloc.add(TABBLOC.TabChanged(tab));
+            },
           ),
         );
       },
